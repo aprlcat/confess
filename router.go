@@ -10,7 +10,10 @@ import (
 )
 
 func (app *Application) SetupRouter() {
-	app.router = fiber.New()
+	app.router = fiber.New(fiber.Config{
+		EnableTrustedProxyCheck: app.BehindReverseProxy,
+		TrustedProxies:          []string{app.TrustedProxy},
+	})
 	app.router.Static("/", app.staticPath)
 	app.router.Post("/api/confess", app.Confess)
 

@@ -46,6 +46,17 @@ in
       description = "ntfy url to use";
     };
 
+    reverseProxy = lib.mkOption {
+      type = lib.types.bool;
+      description = "if running behind reverse proxy";
+    };
+
+    trustedProxy = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = null;
+      description = "Reverse proxy to trust";
+    };
+
     environmentFile = lib.mkOption {
       type = lib.types.nullOr lib.types.path;
       default = null;
@@ -93,7 +104,7 @@ in
         SystemCallArchitectures = "native";
         PrivateUsers = true;
         StateDirectory = cfg.dataDir;
-        ExecStart = "${lib.getExe cfg.package} --port=${toString cfg.port} --static=${cfg.package}/static --database=${cfg.dataDir}/confess.db ${lib.optionalString (!isNull cfg.ntfyUrl) "--ntfy=${cfg.ntfyUrl}"}";
+        ExecStart = "${lib.getExe cfg.package} --port=${toString cfg.port} --static=${cfg.package}/static --database=${cfg.dataDir}/confess.db ${lib.optionalString (!isNull cfg.ntfyUrl) "--ntfy=${cfg.ntfyUrl}"} ${lib.optionalString cfg.reverseProxy "--reverse-proxy"} ${lib.optionalString (!isNull cfg.trustedProxy) "--trusted-proxy=${cfg.trustedProxy}"}";
         EnvironmentFile = cfg.environmentFile;
         Restart = "always";
       };

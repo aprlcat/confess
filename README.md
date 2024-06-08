@@ -17,7 +17,7 @@ inputs = {
 ```nix
 # configuration.nix
 imports = [
-    inputs.confess.nixosModules.default
+    inputs.confess.nixosModules.${builtins.currentSystem}.default
 ];
 
 services.confess-web = {
@@ -25,6 +25,8 @@ services.confess-web = {
     port = 8080; # port to run http api on
 
     # Optional parameters
+    reverseProxy = false; # enable if running behind reverse proxy
+    trustedProxy = "127.0.0.1"; # Reverse proxy to trust
     package = inputs.lastfm-status.packages.${builtins.currentSystem}.default;
     ntfyUrl = ""; # ntfy url to use
     user = "confess-web"; # User account under which confess runs.
