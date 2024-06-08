@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 
 	"github.com/gofiber/fiber/v2"
@@ -37,27 +38,22 @@ type Application struct {
 	Config
 }
 
-// Removes closed sessions
-func (app *Application) CleanWsSessions() {
-	app.wsMutex.Lock()
-	var cleanedSessions []*WsSession
-	for _, s := range app.wsSessions {
-		if !s.closed {
-			cleanedSessions = append(cleanedSessions, s)
-		}
-	}
-	app.wsSessions = cleanedSessions
-	app.wsMutex.Unlock()
-}
-
-func main() {
-	var app Application
-
+func (app *Application) ParseConfig() {
 	flag.UintVar(&app.port, "port", 3000, "port")
 	flag.StringVar(&app.staticPath, "static", "static", "static files path")
 	flag.StringVar(&app.databasePath, "database", "confession.db", "database path")
 	flag.StringVar(&app.ntfyUrl, "ntfy", "", "ntfy url")
 	flag.Parse()
+
+	// Parse ntfy from ENV
+	if app.ntfyUrl == "" {
+		app.ntfyUrl = os.Getenv("NTFY_URL")
+	}
+}
+
+func main() {
+	var app Application
+	app.ParseConfig()
 
 	if err := app.SetupDatabase(); err != nil {
 		log.Fatal("Database setup failed:", err)

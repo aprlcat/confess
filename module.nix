@@ -40,10 +40,16 @@ in
       description = "port to run http api on";
     };
 
-    ntfy = lib.mkOption {
+    ntfyUrl = lib.mkOption {
       type = lib.types.nullOr lib.types.str;
       default = null;
       description = "ntfy url to use";
+    };
+
+    environmentFile = lib.mkOption {
+      type = lib.types.nullOr lib.types.path;
+      default = null;
+      description = "Useful for storing secrets like: NTFY_URL";
     };
   };
 
@@ -87,7 +93,8 @@ in
         SystemCallArchitectures = "native";
         PrivateUsers = true;
         StateDirectory = cfg.dataDir;
-        ExecStart = "${lib.getExe cfg.package} --port=${toString cfg.port} --static=${cfg.package}/static --database=${cfg.dataDir}/confess.db ${lib.optionalString (!isNull cfg.ntfy) "--ntfy=${cfg.ntfy}"}";
+        ExecStart = "${lib.getExe cfg.package} --port=${toString cfg.port} --static=${cfg.package}/static --database=${cfg.dataDir}/confess.db ${lib.optionalString (!isNull cfg.ntfyUrl) "--ntfy=${cfg.ntfyUrl}"}";
+        EnvironmentFile = cfg.environmentFile;
         Restart = "always";
       };
       wantedBy = [ "default.target" ];

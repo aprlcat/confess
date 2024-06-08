@@ -8,6 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+// Removes closed sessions
+func (app *Application) CleanWsSessions() {
+	app.wsMutex.Lock()
+	var cleanedSessions []*WsSession
+	for _, s := range app.wsSessions {
+		if !s.closed {
+			cleanedSessions = append(cleanedSessions, s)
+		}
+	}
+	app.wsSessions = cleanedSessions
+	app.wsMutex.Unlock()
+}
+
 func (app *Application) WsUpgrader(c *fiber.Ctx) error {
 	// IsWebSocketUpgrade returns true if the client
 	// requested upgrade to the WebSocket protocol.

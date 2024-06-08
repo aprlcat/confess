@@ -22,10 +22,13 @@ imports = [
 
 services.confess-web = {
     enable = true;
-    port = 8080;
+    port = 8080; # port to run http api on
 
     # Optional parameters
     package = inputs.lastfm-status.packages.${builtins.currentSystem}.default;
-    ntfy = "ntfy.sh/asdsad";
+    ntfyUrl = ""; # ntfy url to use
+    user = "confess-web"; # User account under which confess runs.
+    group = "confess-web"; # Group under which confess runs.
+    environmentFile = "/etc/secrets/confess.env"; # Useful for storing api keys like: NTFY_URL
 };
 ```
