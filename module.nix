@@ -108,6 +108,8 @@ in
         EnvironmentFile = cfg.environmentFile;
         Restart = "always";
       };
+
+      environment.GIN_MODE = "release";
       wantedBy = [ "default.target" ];
     };
   };

@@ -1,24 +1,25 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
 
-	"github.com/gofiber/contrib/websocket"
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
 )
 
 func (app *Application) SetupRouter() {
-	app.router = fiber.New(fiber.Config{
-		EnableTrustedProxyCheck: app.BehindReverseProxy,
-		TrustedProxies:          []string{app.TrustedProxy},
-	})
-	app.router.Static("/", app.staticPath)
-	app.router.Post("/api/confess", app.Confess)
+	app.router = gin.Default()
+	app.router.ForwardedByClientIP = app.BehindReverseProxy
+	app.router.SetTrustedProxies([]string{app.TrustedProxy})
 
-	app.router.Use("/ws", app.WsUpgrader)
-	app.router.Get("/ws", websocket.New(app.ConfessionFeed))
+	app.router.StaticFile("/", app.staticPath+"/html/index.html")
+	app.router.Static("/static", app.staticPath)
+	app.router.POST("/api/confess", app.Confess)
+	app.router.Any("/ws", func(c *gin.Context) {
+		app.ws.HandleRequest(c.Writer, c.Request)
+	})
 }
 
 // Curl command for testing
@@ -32,26 +33,28 @@ type ConfessInput struct {
 
 const MaxBodySize = 1000
 
-func (app *Application) Confess(c *fiber.Ctx) error {
-	input := new(ConfessInput)
-	if err := c.BodyParser(input); err != nil {
-		return err
+func (app *Application) Confess(c *gin.Context) {
+	var input ConfessInput
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
 	}
 
 	rawConfession := strings.TrimSpace(input.Confession)
 	if rawConfession == "" {
-		c.Status(http.StatusBadRequest)
-		return c.SendString("confession cannot be empty")
+		c.String(http.StatusBadRequest, "confession cannot be empty")
+		return
 	} else if len(rawConfession) > MaxBodySize {
-		c.Status(http.StatusBadRequest)
-		return c.SendString("confession cannot be longer than 1000 characters")
+		c.String(http.StatusBadRequest, "confession cannot be longer than 1000 characters")
+		return
 	}
 
-	confession := Confession{Confession: rawConfession, IpAddress: c.IP(), Public: input.Public}
+	confession := Confession{Confession: rawConfession, IpAddress: c.ClientIP(), Public: input.Public}
 
 	if err := app.db.Create(&confession).Error; err != nil {
 		log.Println("failed to add new confession:", err)
-		return c.SendStatus(http.StatusBadRequest)
+		c.String(http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
+		return
 	}
 
 	if err := app.sendNtfyNotification(confession); err != nil {
@@ -60,16 +63,18 @@ func (app *Application) Confess(c *fiber.Ctx) error {
 
 	// Sends notification to all sessions
 	if input.Public {
-		app.CleanWsSessions()
-		for _, s := range app.wsSessions {
-			if !s.closed {
-				s.notify <- ConfessionOut{
-					Confession: rawConfession,
-					Date:       confession.CreatedAt,
-				}
+		bs, err := json.Marshal(ConfessionOut{
+			Confession: rawConfession,
+			Date:       confession.CreatedAt,
+		})
+		if err != nil {
+			log.Println("failed to marshal json:", err)
+		} else {
+			if err := app.ws.Broadcast(bs); err != nil {
+				log.Println("failed to send notification to websockets:", err)
 			}
 		}
 	}
 
-	return c.SendStatus(http.StatusOK)
+	c.String(http.StatusOK, http.StatusText(http.StatusOK))
 }

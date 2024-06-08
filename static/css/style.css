@@ -25,7 +25,7 @@ confession {
     background-color: var(--interactive-background-color);
 
     border-radius: 10px;
-    background-image: url("heartsmall.png");
+    background-image: url("/static/images/heartsmall.png");
     background-repeat: repeat;
     animation: scroll 60s linear infinite;
 }

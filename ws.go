@@ -1,35 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"time"
 
-	"github.com/gofiber/contrib/websocket"
-	"github.com/gofiber/fiber/v2"
+	"github.com/olahol/melody"
 )
-
-// Removes closed sessions
-func (app *Application) CleanWsSessions() {
-	app.wsMutex.Lock()
-	var cleanedSessions []*WsSession
-	for _, s := range app.wsSessions {
-		if !s.closed {
-			cleanedSessions = append(cleanedSessions, s)
-		}
-	}
-	app.wsSessions = cleanedSessions
-	app.wsMutex.Unlock()
-}
-
-func (app *Application) WsUpgrader(c *fiber.Ctx) error {
-	// IsWebSocketUpgrade returns true if the client
-	// requested upgrade to the WebSocket protocol.
-	if websocket.IsWebSocketUpgrade(c) {
-		c.Locals("allowed", true)
-		return c.Next()
-	}
-	return fiber.ErrUpgradeRequired
-}
 
 // Confession data to show to user
 type ConfessionOut struct {
@@ -37,54 +14,33 @@ type ConfessionOut struct {
 	Date       time.Time `json:"date"`
 }
 
-func (app *Application) ConfessionFeed(c *websocket.Conn) {
+func (app *Application) SetupWebsocket() {
+	app.ws = melody.New()
+	app.ws.HandleConnect(app.HandleConnectWs)
+}
+
+func (app *Application) HandleConnectWs(s *melody.Session) {
 	// Fetch 5 recent confessions
 	var confessions []Confession
-	if err := app.db.Order("created_at desc").
-		Where("public = true").Limit(5).Find(&confessions).Error; err != nil {
+	if err := app.db.Order("created_at desc").Where("public = true").Limit(5).Find(&confessions).Error; err != nil {
 		log.Println("failed to fetch confessions:", err)
-	} else {
-		var out []ConfessionOut
-		for _, confession := range confessions {
-			out = append(out, ConfessionOut{
-				Confession: confession.Confession,
-				Date:       confession.CreatedAt,
-			})
-		}
-
-		if err := c.WriteJSON(out); err != nil {
-			log.Println("failed to send initial confessions:", err)
-		}
+		return
 	}
 
-	session := WsSession{notify: make(chan ConfessionOut)}
+	var out []ConfessionOut
+	for _, confession := range confessions {
+		out = append(out, ConfessionOut{
+			Confession: confession.Confession,
+			Date:       confession.CreatedAt,
+		})
+	}
 
-	app.wsMutex.Lock()
-	app.wsSessions = append(app.wsSessions, &session)
-	app.wsMutex.Unlock()
+	bs, err := json.Marshal(out)
+	if err != nil {
+		log.Println("failed to marshal json:", err)
+	}
 
-	exit := make(chan bool)
-
-	// exit worker
-	go func() {
-		for {
-			// on exit sends websocket.ErrCloseSent
-			if _, _, err := c.NextReader(); err != nil {
-				exit <- true
-				break
-			}
-		}
-	}()
-
-	for {
-		select {
-		case <-exit:
-			session.close()
-			return
-		case cfn := <-session.notify:
-			if err := c.WriteJSON(cfn); err != nil {
-				log.Println("failed to send confession:", err)
-			}
-		}
+	if err := s.Write(bs); err != nil {
+		log.Println("failed to send initial confessions:", err)
 	}
 }

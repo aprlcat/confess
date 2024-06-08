@@ -5,21 +5,11 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sync"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gin-gonic/gin"
+	"github.com/olahol/melody"
 	"gorm.io/gorm"
 )
-
-type WsSession struct {
-	notify chan ConfessionOut
-	closed bool
-}
-
-func (ws *WsSession) close() {
-	ws.closed = true
-	close(ws.notify)
-}
 
 type Config struct {
 	port         uint   // port to run http server on
@@ -32,11 +22,10 @@ type Config struct {
 }
 
 type Application struct {
-	router *fiber.App
+	router *gin.Engine
 	db     *gorm.DB
 
-	wsSessions []*WsSession
-	wsMutex    sync.Mutex
+	ws *melody.Melody
 
 	Config
 }
@@ -68,11 +57,13 @@ func main() {
 	var app Application
 	app.ParseConfig()
 
+	app.SetupWebsocket()
+
 	if err := app.SetupDatabase(); err != nil {
 		log.Fatal("Database setup failed:", err)
 	}
 
 	app.SetupRouter()
 
-	log.Fatal(app.router.Listen(":" + fmt.Sprint(app.port)))
+	log.Fatal(app.router.Run(":" + fmt.Sprint(app.port)))
 }
