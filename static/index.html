@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confess</title>
+    <meta name="description" content="I am all ears">
+    <link rel="icon" href="im_all_ears.png">
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <rainbowText id="confessionsAmount" class="hidden">meow</rainbowText>
+
+        <div class="top-row">
+            <div class="title">
+                <b id="main-title">Confess</b>
+                <div>I am all ears</div>
+            </div>
+
+            <spinner id="ear">
+                <img src="im_all_ears.png" alt="I am all ears" width="200px">
+            </spinner>
+        </div>
+
+        <form id="confessional">
+            <textarea id="confessional-text" name="confession" placeholder="Confession" rows="10" cols="50" maxlength="1000"></textarea>
+            <div id="word-counter">Word count: 0</div>
+
+            <div id="button-row">
+                <button id="submit-confession" type="submit">Submit confession</button>
+
+                <div class="checkbox">
+                    <input type="checkbox" name="confession-public" id="confession-public">
+                    <label for="confession-public">Public</label>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <button id="play-music" class="clickMe"><i class='icon' data-feather="music"></i></button>
+
+    <h2>Recent confessions</h2>
+    <div id="recent-confessions"></div>
+
+    <div id="player">
+        <iframe
+          src="https://www.youtube.com/embed/vFy_K4CXq44"
+          allowtransparency
+          allow="autoplay"
+        ></iframe>
+    </div>
+
+    <footer>
+        <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/relativeTime.js"></script>
+        <script src="https://cdn.plyr.io/3.7.8/plyr.js"></script>
+        <script src="script.js"></script>
+    </footer>
+</body>
+</html>

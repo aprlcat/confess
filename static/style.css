@@ -1,0 +1,289 @@
+.icon {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    margin-bottom: 3px;
+    vertical-align: middle;
+}
+
+#recent-confessions {
+    display: flex;
+    flex-direction: column;
+    /* Fade out the bottom border */
+    mask: linear-gradient(to bottom,
+        rgba(0,0,0, 1) 0,   rgba(0,0,0, 1) 40%,
+        rgba(0,0,0, 0) 95%, rgba(0,0,0, 0) 0
+    ) 100% 50% / 100% 100% repeat-x;
+}
+
+confession {
+    margin: 10px;
+    background-color: var(--interactive-background-color);
+
+    border-radius: 10px;
+    background-image: url("heartsmall.png");
+    background-repeat: repeat;
+    animation: scroll 60s linear infinite;
+}
+
+:root {
+    --confession-bg: rgba(255, 255, 255, 0.603);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --confession-bg: rgba(0, 0, 0, 0.815);
+    }
+}
+
+confession .content {
+    border-radius: 10px;
+    padding: 10px;
+    background-color: var(--confession-bg);
+}
+
+@keyframes scroll {
+    from { background-position: 0 20px; }
+    to { background-position: 100% 0; }
+}
+
+confession .date {
+    text-decoration: underline;
+}
+
+confession .text {
+    margin-top: 5px;
+    font-size: 20px;
+    text-wrap: wrap;
+    word-wrap: break-word;
+}
+
+/* Make sure container doesnt get too stretched */
+.container {
+    max-width: 1000px;
+    margin: auto;
+}
+
+.top-row {
+    display: flex;
+}
+
+.title {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+
+    text-align: center;
+    justify-content: center;
+}
+
+#main-title {
+    font-size: xx-large
+}
+
+#ear {
+    display: flex;
+    align-self: center;
+    margin: 20px;
+}
+
+@media screen and (max-width: 600px) {
+    .top-row {
+        flex-direction: column;
+    }
+
+    /* Just in case  */
+    #confessionsAmount {
+        text-align: center;
+    }
+
+    #button-row {
+        flex-direction: column;
+    }
+
+    #button-row .checkbox {
+        align-self: flex-end;
+    }
+}
+
+#word-counter {
+    margin-top: 5px;
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+#confessional textarea {
+    display: flex;
+    width: 100%;
+    height: 100px;
+    font-size: 30px;
+    box-sizing: border-box;
+}
+
+#button-row {
+    display: flex;
+    height: 50px;
+}
+
+#button-row button {
+    flex: 0 0 90%;
+    font-size: 30px;
+}
+
+.checkbox {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 10%;
+}
+
+.checkbox label {
+    text-align: center;
+    align-self: center;
+}
+
+.checkbox input {
+    align-self: center;
+    height: 100%;
+    width: 100%;
+}
+
+/* Prettyyyy :333 */
+#confessionsAmount {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#play-music {
+    font-size: x-large;
+    font-weight: bold;
+    border: none;
+    background-color: transparent;
+    margin-top: 10px;
+}
+
+#play-music .icon {
+    width: 40px;
+    height: 40px;
+}
+
+#player {
+    display: none;
+}
+
+spinner {
+    animation: spinner 5s infinite;
+}
+
+@keyframes spinner {
+    0% {
+        transform: rotateY(0deg);
+    }
+
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+rainbowText {
+    animation: confessionRainbow 5s infinite;
+}
+
+@keyframes confessionRainbow {
+    0% {
+        color: red;
+    }
+
+    33% {
+        color: orange;
+    }
+
+    66% {
+        color: yellow;
+    }
+
+    90% {
+        color: green;
+    }
+
+    100% {
+        color: red;
+    }
+}
+
+.fadeOut {
+    animation: fadeOutAnim 1s 1 forwards;
+}
+
+/* Animation that makes the button slide out of screen */
+@keyframes fadeOutAnim {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-300px);
+        display: none;
+    }
+}
+
+.clickMe {
+    animation: clickMe 1s infinite;
+}
+
+/* Annoying animation shaking the button */
+@keyframes clickMe {
+    0% {
+        color: white;
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    50% {
+        /* color: blue; */
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+        color: white;
+    }
+}
+
+.shake {
+    animation: shake 1s forwards;
+}
+
+/* Animation played when you do something wrong */
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(5px);
+    }
+
+    50% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
