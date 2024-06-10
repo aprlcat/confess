@@ -9,6 +9,7 @@ const wordCounter = document.getElementById('word-counter')
 const playMusic = document.getElementById('play-music')
 const recentConfessions = document.getElementById('recent-confessions')
 const confessionPublic = document.getElementById('confession-public')
+const noConfessionsRecently = document.getElementById('no-confessions-recently')
 
 // Ewww dependencies
 feather.replace();
@@ -25,12 +26,20 @@ const ws = new WebSocket(wsUrl)
 // Confession format {"confession":"","date":""}
 let firstMessage = true
 ws.onmessage = function (event) {
+    if (event.data == "null") {
+        if (firstMessage) {
+            noConfessionsRecently.classList.remove('hidden')
+            firstMessage = false
+        }
+        return
+    }
+
     const data = JSON.parse(event.data)
+    noConfessionsRecently.remove()
+
     if (firstMessage) {
-        if (data !== null) {
-            for (let confession of data) {
-                recentConfessions.appendChild(ConstructRecentConfession(confession.confession, confession.date))
-            }
+        for (let confession of data) {
+            recentConfessions.appendChild(ConstructRecentConfession(confession.confession, confession.date))
         }
 
         firstMessage = false
@@ -105,7 +114,6 @@ confessional.addEventListener('submit', (e) => {
         if (res.ok) {
             // Reset the form
             confessionalText.value = ''
-            confessionPublic.checked = false
 
             // Update the UI
             confessionAmount++

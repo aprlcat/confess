@@ -91,6 +91,7 @@ confession .text {
     margin: 20px;
 }
 
+/* For mobile phones or small screens */
 @media screen and (max-width: 600px) {
     .top-row {
         flex-direction: column;
@@ -107,6 +108,10 @@ confession .text {
 
     #button-row .checkbox {
         align-self: flex-end;
+    }
+
+    #recent-confessions-title, #no-confessions-recently, #confessionsAmount {
+        text-align: center;
     }
 }
 

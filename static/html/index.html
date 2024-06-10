@@ -32,17 +32,18 @@
                 <button id="submit-confession" type="submit">Submit confession</button>
 
                 <div class="checkbox">
-                    <input type="checkbox" name="confession-public" id="confession-public">
+                    <input type="checkbox" name="confession-public" id="confession-public" checked>
                     <label for="confession-public">Public</label>
                 </div>
             </div>
         </form>
+
+        <button id="play-music" class="clickMe"><i class='icon' data-feather="music"></i></button>
+
+        <h2 id="recent-confessions-title">Recent confessions</h2>
+        <p id="no-confessions-recently" class="hidden">No confessions in the last 24 hours</p>
+        <div id="recent-confessions"></div>
     </div>
-
-    <button id="play-music" class="clickMe"><i class='icon' data-feather="music"></i></button>
-
-    <h2>Recent confessions</h2>
-    <div id="recent-confessions"></div>
 
     <div id="player">
         <iframe
