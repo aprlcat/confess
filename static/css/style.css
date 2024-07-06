@@ -91,15 +91,14 @@ confession .text {
     margin: 20px;
 }
 
+#viewers-count {
+    margin-top: 5px;
+}
+
 /* For mobile phones or small screens */
 @media screen and (max-width: 600px) {
     .top-row {
         flex-direction: column;
-    }
-
-    /* Just in case  */
-    #confessionsAmount {
-        text-align: center;
     }
 
     #button-row {

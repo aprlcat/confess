@@ -5,11 +5,11 @@ const confessional = document.getElementById('confessional')
 const confessionalText = document.getElementById('confessional-text')
 const confessionsAmount = document.getElementById('confessionsAmount')
 const submitConfession = document.getElementById('submit-confession')
-const wordCounter = document.getElementById('word-counter')
 const playMusic = document.getElementById('play-music')
 const recentConfessions = document.getElementById('recent-confessions')
 const confessionPublic = document.getElementById('confession-public')
 const noConfessionsRecently = document.getElementById('no-confessions-recently')
+const viewersCount = document.getElementById('viewers-count')
 
 // Ewww dependencies
 feather.replace();
@@ -22,29 +22,32 @@ let wsUrl = `${wsProtocol}://${window.location.host}/ws`;
 console.log("Connecting to ", wsUrl)
 const ws = new WebSocket(wsUrl)
 
-// First message is always an array of confessions
-// Confession format {"confession":"","date":""}
-let firstMessage = true
+let iota = 0;
+const InitialDataEventType = iota++;
+const ConfessionEventType = iota++;
+const ViewersEventType = iota++;
+
 ws.onmessage = function (event) {
-    if (event.data == "null") {
-        if (firstMessage) {
-            noConfessionsRecently.classList.remove('hidden')
-            firstMessage = false
-        }
-        return
-    }
-
     const data = JSON.parse(event.data)
-    noConfessionsRecently.remove()
+    switch (data.type) {
+        case InitialDataEventType:
+            viewersCount.innerText = `Users online ${data.viewers}`
+            if (data.confessions == null) {
+                noConfessionsRecently.classList.remove('hidden')
+                return
+            }
 
-    if (firstMessage) {
-        for (let confession of data) {
-            recentConfessions.appendChild(ConstructRecentConfession(confession.confession, confession.date))
-        }
-
-        firstMessage = false
-    } else {
-        AddConfession(data)
+            for (let confession of data.confessions) {
+                recentConfessions.appendChild(ConstructRecentConfession(confession.confession, confession.date))
+            }
+            break
+        case ConfessionEventType:
+            noConfessionsRecently.remove()
+            AddConfession(data)
+            break
+        case ViewersEventType:
+            viewersCount.innerText = `Users online ${data.viewers}`
+            break
     }
 }
 
@@ -88,9 +91,6 @@ function updateConfessionsAmount() {
     confessionsAmount.innerText = `Confessions: ${confessionAmount}, last confessed: ${dayjs(confessionDate).fromNow()}`
 }
 
-confessional.confession.addEventListener('input', (e) => {
-    wordCounter.innerText = `Word count: ${e.target.value.trim().split(/\s+/).length-1}`
-})
 
 confessional.addEventListener('submit', (e) => {
     e.preventDefault()

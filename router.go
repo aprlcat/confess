@@ -63,10 +63,7 @@ func (app *Application) Confess(c *gin.Context) {
 
 	// Sends notification to all sessions
 	if input.Public {
-		bs, err := json.Marshal(ConfessionOut{
-			Confession: rawConfession,
-			Date:       confession.CreatedAt,
-		})
+		bs, err := json.Marshal(NewConfessionEvent(rawConfession, confession.CreatedAt))
 		if err != nil {
 			log.Println("failed to marshal json:", err)
 		} else {
