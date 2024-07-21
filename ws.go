@@ -13,7 +13,6 @@ type WsEventType uint
 const (
 	InitialDataEventType WsEventType = iota
 	ConfessionEventType
-	ViewersEventType
 )
 
 type WsEventCommons struct {
@@ -27,15 +26,13 @@ type InitialDataEventInner struct {
 }
 type InitialDataEvent struct {
 	Confessions []InitialDataEventInner `json:"confessions"`
-	Viewers     uint                    `json:"viewers"`
 
 	WsEventCommons
 }
 
-func NewInitialDataEvent(Confessions []InitialDataEventInner, Viewers uint) InitialDataEvent {
+func NewInitialDataEvent(Confessions []InitialDataEventInner) InitialDataEvent {
 	return InitialDataEvent{
 		Confessions: Confessions,
-		Viewers:     Viewers,
 		WsEventCommons: WsEventCommons{
 			Type: InitialDataEventType,
 		},
@@ -59,21 +56,6 @@ func NewConfessionEvent(Confession string, Date time.Time) ConfessionEvent {
 	}
 }
 
-// Event sent when the viewers amount changes
-type ViewersEvent struct {
-	Viewers uint `json:"viewers"`
-	WsEventCommons
-}
-
-func NewViewersEvent(Viewers uint) ViewersEvent {
-	return ViewersEvent{
-		Viewers: Viewers,
-		WsEventCommons: WsEventCommons{
-			Type: ViewersEventType,
-		},
-	}
-}
-
 func (app *Application) SetupWebsocket() {
 	app.ws = melody.New()
 	app.ws.HandleConnect(app.HandleConnectWs)
@@ -93,7 +75,7 @@ func (app *Application) HandleConnectWs(s *melody.Session) {
 		initialConfessions = append(initialConfessions, InitialDataEventInner{Confession: confession.Confession, Date: confession.CreatedAt})
 	}
 
-	bs, err := json.Marshal(NewInitialDataEvent(initialConfessions, uint(app.ws.Len())))
+	bs, err := json.Marshal(NewInitialDataEvent(initialConfessions))
 	if err != nil {
 		log.Println("failed to marshal json for initial event:", err)
 		return
@@ -101,25 +83,7 @@ func (app *Application) HandleConnectWs(s *melody.Session) {
 	if err := s.Write(bs); err != nil {
 		log.Println("failed to send initial info:", err)
 	}
-
-	// Sends new viewer amount to other sessions
-	bs, err = json.Marshal(NewViewersEvent(uint(app.ws.Len())))
-	if err != nil {
-		log.Println("failed to marshal json for viewers event:", err)
-		return
-	}
-	if err := app.ws.BroadcastOthers(bs, s); err != nil {
-		log.Println("failed to send viewers amount:", err)
-	}
 }
 
 func (app *Application) HandleDisconnectWs(s *melody.Session) {
-	// Sends new viewer amount to all sessions
-	bs, err := json.Marshal(NewViewersEvent(uint(app.ws.Len())))
-	if err != nil {
-		log.Println("failed to marshal json for viewers event:", err)
-	}
-	if err := app.ws.Broadcast(bs); err != nil {
-		log.Println("failed to send viewers amount:", err)
-	}
 }

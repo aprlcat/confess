@@ -9,7 +9,6 @@ const playMusic = document.getElementById('play-music')
 const recentConfessions = document.getElementById('recent-confessions')
 const confessionPublic = document.getElementById('confession-public')
 const noConfessionsRecently = document.getElementById('no-confessions-recently')
-const viewersCount = document.getElementById('viewers-count')
 
 // Ewww dependencies
 feather.replace();
@@ -25,13 +24,11 @@ const ws = new WebSocket(wsUrl)
 let iota = 0;
 const InitialDataEventType = iota++;
 const ConfessionEventType = iota++;
-const ViewersEventType = iota++;
 
 ws.onmessage = function (event) {
     const data = JSON.parse(event.data)
     switch (data.type) {
         case InitialDataEventType:
-            viewersCount.innerText = `Users online ${data.viewers}`
             if (data.confessions == null) {
                 noConfessionsRecently.classList.remove('hidden')
                 return
@@ -44,9 +41,6 @@ ws.onmessage = function (event) {
         case ConfessionEventType:
             noConfessionsRecently.remove()
             AddConfession(data)
-            break
-        case ViewersEventType:
-            viewersCount.innerText = `Users online ${data.viewers}`
             break
     }
 }
