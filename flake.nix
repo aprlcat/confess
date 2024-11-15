@@ -10,7 +10,15 @@
     , flake-utils
     , ...
     } @ inputs:
-    flake-utils.lib.eachDefaultSystem (
+    {
+      overlays.default = final: prev: {
+        confess = self.packages.${final.system}.default;
+      };
+
+      nixosModules.default = import ./module.nix;
+    }
+    //
+    (flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs {
@@ -18,8 +26,6 @@
         };
       in
       with pkgs; {
-        nixosModules.default = import ./module.nix inputs;
-
         devShells.default = mkShell {
           buildInputs = with pkgs; [
             go
@@ -29,5 +35,5 @@
 
         packages.default = pkgs.callPackage ./build.nix { };
       }
-    );
+    ));
 }

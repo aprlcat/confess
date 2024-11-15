@@ -1,10 +1,10 @@
-inputs: { pkgs
-        , config ? pkgs.config
-        , lib ? pkgs.lib
-        , self
-        , system
-        , ...
-        }:
+{ pkgs
+, config ? pkgs.config
+, lib ? pkgs.lib
+, self
+, system
+, ...
+}:
 let
   cfg = config.services.confess-web;
 in
@@ -14,7 +14,7 @@ in
 
     package = lib.mkOption {
       description = "package to use";
-      default = inputs.self.packages.${system}.default;
+      default = pkgs.callPackage ./build.nix { };
     };
 
     dataDir = lib.mkOption {

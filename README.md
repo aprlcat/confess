@@ -17,7 +17,7 @@ inputs = {
 ```nix
 # configuration.nix
 imports = [
-    inputs.confess.nixosModules.${builtins.currentSystem}.default
+    inputs.confess.nixosModules.default
 ];
 
 services.confess-web = {
