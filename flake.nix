@@ -1,39 +1,52 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs =
     { self
     , nixpkgs
-    , flake-utils
     , ...
-    } @ inputs:
+    }:
+    let
+      inherit (nixpkgs) lib;
+
+      systems = lib.systems.flakeExposed;
+
+      forAllSystems = lib.genAttrs systems;
+
+      nixpkgsFor = forAllSystems (system: import nixpkgs {
+        inherit system;
+      });
+    in
     {
       overlays.default = final: prev: {
-        confess = self.packages.${final.system}.default;
+        confess = self.packages.${final.stdenv.system}.confess;
       };
 
       nixosModules.default = import ./module.nix;
-    }
-    //
-    (flake-utils.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = import nixpkgs {
-          inherit system;
-        };
-      in
-      with pkgs; {
-        devShells.default = mkShell {
-          buildInputs = with pkgs; [
-            go
-            sqlite
-          ];
-        };
 
-        packages.default = pkgs.callPackage ./build.nix { };
-      }
-    ));
+      devShells = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              go
+              sqlite
+            ];
+          };
+        });
+
+      packages = forAllSystems (system:
+        let
+          pkgs = nixpkgsFor.${system};
+        in
+        rec {
+          confess = default;
+          default = pkgs.callPackage ./build.nix { };
+        }
+      );
+    };
 }
