@@ -15,19 +15,10 @@
     flex-direction: column;
     /* Fade out the bottom border */
     mask: linear-gradient(to bottom,
-        rgba(0,0,0, 1) 0,   rgba(0,0,0, 1) 40%,
-        rgba(0,0,0, 0) 95%, rgba(0,0,0, 0) 0
-    ) 100% 50% / 100% 100% repeat-x;
-}
-
-confession {
-    margin: 10px;
-    background-color: var(--interactive-background-color);
-
-    border-radius: 10px;
-    background-image: url("/static/images/heartsmall.png");
-    background-repeat: repeat;
-    animation: scroll 60s linear infinite;
+            rgba(0, 0, 0, 1) 0,
+            rgba(0, 0, 0, 1) 40%,
+            rgba(0, 0, 0, 0) 95%,
+            rgba(0, 0, 0, 0) 0) 100% 50% / 100% 100% repeat-x;
 }
 
 :root {
@@ -40,26 +31,41 @@ confession {
     }
 }
 
-confession .content {
+confession {
+    margin: 10px;
+    background-color: var(--interactive-background-color);
+
     border-radius: 10px;
-    padding: 10px;
-    background-color: var(--confession-bg);
+    background-image: url("/static/images/heartsmall.png");
+    background-repeat: repeat;
+    animation: scroll 60s linear infinite;
+
+    .content {
+        border-radius: 10px;
+        padding: 10px;
+        background-color: var(--confession-bg);
+    }
+
+    .date {
+        text-decoration: underline;
+    }
+
+    .text {
+        margin-top: 5px;
+        font-size: 20px;
+        text-wrap: wrap;
+        word-wrap: break-word;
+    }
 }
 
 @keyframes scroll {
-    from { background-position: 0 20px; }
-    to { background-position: 100% 0; }
-}
+    from {
+        background-position: 0 20px;
+    }
 
-confession .date {
-    text-decoration: underline;
-}
-
-confession .text {
-    margin-top: 5px;
-    font-size: 20px;
-    text-wrap: wrap;
-    word-wrap: break-word;
+    to {
+        background-position: 100% 0;
+    }
 }
 
 /* Make sure container doesnt get too stretched */
@@ -82,7 +88,7 @@ confession .text {
 }
 
 #main-title {
-    font-size: xx-large
+    font-size: xx-large;
 }
 
 #ear {
@@ -127,28 +133,28 @@ confession .text {
 #button-row {
     display: flex;
     height: 50px;
-}
 
-#button-row button {
-    flex: 0 0 90%;
-    font-size: 30px;
+    button {
+        flex: 0 0 90%;
+        font-size: 30px;
+    }
 }
 
 .checkbox {
     display: flex;
     flex-direction: column;
     flex: 0 0 10%;
-}
 
-.checkbox label {
-    text-align: center;
-    align-self: center;
-}
+    label {
+        text-align: center;
+        align-self: center;
+    }
 
-.checkbox input {
-    align-self: center;
-    height: 100%;
-    width: 100%;
+    input {
+        align-self: center;
+        height: 100%;
+        width: 100%;
+    }
 }
 
 /* Prettyyyy :333 */
@@ -163,11 +169,11 @@ confession .text {
     border: none;
     background-color: transparent;
     margin-top: 10px;
-}
 
-#play-music .icon {
-    width: 40px;
-    height: 40px;
+    .icon {
+        width: 40px;
+        height: 40px;
+    }
 }
 
 #player {
