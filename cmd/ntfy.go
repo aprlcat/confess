@@ -16,7 +16,13 @@ func (app *Application) sendNtfyNotification(confession confession) (err error) 
 		return
 	}
 
-	req.Header.Set("Title", "New confession from "+confession.IpAddress)
+	// IP only matters in public case since this is used for moderation
+	if confession.Public {
+		req.Header.Set("Title", "New confession from "+confession.IpAddress)
+	} else {
+		req.Header.Set("Title", "New private confession")
+	}
+
 	_, err = http.DefaultClient.Do(req)
 	return
 }
