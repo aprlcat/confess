@@ -1,8 +1,6 @@
 { pkgs
 , config ? pkgs.config
 , lib ? pkgs.lib
-, self
-, system
 , ...
 }:
 let

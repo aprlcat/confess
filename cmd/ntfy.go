@@ -1,11 +1,11 @@
-package main
+package cmd
 
 import (
 	"net/http"
 	"strings"
 )
 
-func (app *Application) sendNtfyNotification(confession Confession) (err error) {
+func (app *Application) sendNtfyNotification(confession confession) (err error) {
 	if app.ntfyUrl == "" {
 		return
 	}

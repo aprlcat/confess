@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"encoding/json"
@@ -9,14 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (app *Application) SetupRouter() {
+func (app *Application) setupRouter() {
 	app.router = gin.Default()
-	app.router.ForwardedByClientIP = app.BehindReverseProxy
-	app.router.SetTrustedProxies([]string{app.TrustedProxy})
+	app.router.ForwardedByClientIP = app.behindReverseProxy
+	app.router.SetTrustedProxies([]string{app.trustedProxy})
 
 	app.router.StaticFile("/", app.staticPath+"/html/index.html")
 	app.router.Static("/static", app.staticPath)
-	app.router.POST("/api/confess", app.Confess)
+	app.router.POST("/api/confess", app.confess)
 	app.router.Any("/ws", func(c *gin.Context) {
 		app.ws.HandleRequest(c.Writer, c.Request)
 	})
@@ -24,17 +24,15 @@ func (app *Application) SetupRouter() {
 
 // Curl command for testing
 // curl 'http://localhost:3000/api/confess' --data-raw 'confession=I am confessing something'
-type ConfessInput struct {
+type confessInput struct {
 	Confession string `form:"confession" json:"confession"`
 
 	// Wether confession should show up on the feed
 	Public bool `form:"public" default:"false" json:"public"`
 }
 
-const MaxBodySize = 1000
-
-func (app *Application) Confess(c *gin.Context) {
-	var input ConfessInput
+func (app *Application) confess(c *gin.Context) {
+	var input confessInput
 	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
@@ -49,7 +47,7 @@ func (app *Application) Confess(c *gin.Context) {
 		return
 	}
 
-	confession := Confession{Confession: rawConfession, IpAddress: c.ClientIP(), Public: input.Public}
+	confession := confession{Confession: rawConfession, IpAddress: c.ClientIP(), Public: input.Public}
 
 	if err := app.db.Create(&confession).Error; err != nil {
 		log.Println("failed to add new confession:", err)
@@ -63,7 +61,7 @@ func (app *Application) Confess(c *gin.Context) {
 
 	// Sends notification to all sessions
 	if input.Public {
-		bs, err := json.Marshal(NewConfessionEvent(rawConfession, confession.CreatedAt))
+		bs, err := json.Marshal(newConfessionEvent(rawConfession, confession.CreatedAt))
 		if err != nil {
 			log.Println("failed to marshal json:", err)
 		} else {

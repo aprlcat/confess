@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"gorm.io/driver/sqlite"
@@ -6,7 +6,7 @@ import (
 )
 
 // Database model
-type Confession struct {
+type confession struct {
 	gorm.Model
 
 	Confession string
@@ -14,13 +14,13 @@ type Confession struct {
 	Public     bool // Wether confession should show up on the feed, true = shows up on feed!
 }
 
-func (app *Application) SetupDatabase() (err error) {
+func (app *Application) setupDatabase() (err error) {
 	app.db, err = gorm.Open(sqlite.Open(app.databasePath), &gorm.Config{})
 	if err != nil {
 		return
 	}
 
-	app.db.AutoMigrate(&Confession{})
+	app.db.AutoMigrate(&confession{})
 
 	return
 }
