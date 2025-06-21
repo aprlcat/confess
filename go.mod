@@ -5,7 +5,7 @@ go 1.24.3
 require (
 	github.com/gin-gonic/gin v1.10.1
 	github.com/olahol/melody v1.3.0
-	gorm.io/driver/sqlite v1.5.7
+	gorm.io/driver/sqlite v1.6.0
 	gorm.io/gorm v1.30.0
 )
 
