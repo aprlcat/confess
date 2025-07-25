@@ -23,7 +23,7 @@ buildGoModule {
 
   meta = {
     description = "A simple confessional website";
-    homepage = "https://forge.catnip.ee/batteredbunny/confess";
+    homepage = "https://github.com/BatteredBunny/confess";
     mainProgram = "confess";
   };
 }
