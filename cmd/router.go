@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"strings"
 
+	"slices"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -116,13 +118,7 @@ func (app *Application) addReaction(c *gin.Context) {
 	}
 
 	// validate emoji
-	isValid := false
-	for _, validEmoji := range ValidReactions {
-		if input.Emoji == validEmoji {
-			isValid = true
-			break
-		}
-	}
+	isValid := slices.Contains(ValidReactions, input.Emoji)
 	if !isValid {
 		c.String(http.StatusBadRequest, "invalid emoji")
 		return
