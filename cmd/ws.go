@@ -90,9 +90,17 @@ func (app *Application) setupWebsocket() {
 }
 
 func (app *Application) handleConnectWs(s *melody.Session) {
-	// Fetch 5 recent confessions in the last 24 hours
+	// Fetch 5 recent confessions in the last week
+	var weekAgo = time.Now().Add(-7 * 24 * time.Hour)
+
 	var confessions []confession
-	if err := app.db.Preload("Reactions").Order("created_at desc").Where("public = true").Where("created_at > ?", time.Now().Add(-24*time.Hour)).Limit(5).Find(&confessions).Error; err != nil {
+	if err := app.db.
+		Preload("Reactions").
+		Order("created_at desc").
+		Where("public = true").
+		Where("created_at > ?", weekAgo).
+		Limit(5).
+		Find(&confessions).Error; err != nil {
 		log.Println("failed to fetch confessions:", err)
 		return
 	}
