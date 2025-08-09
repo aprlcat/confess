@@ -76,10 +76,82 @@
   height: 24px;
 }
 
-.mascot img {
-  width: 160px;
-  height: auto;
-  border-radius: var(--radius);
+#mascot {
+  img {
+    width: 160px;
+    height: auto;
+    border-radius: var(--radius);
+  }
+
+  animation: floating 10s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%   { transform: translate(0px, 0px) rotate(0deg) scale(1); }
+  15%  { transform: translate(2px, -4px) rotate(0.4deg) scale(1.01); }
+  30%  { transform: translate(-3px, -6px) rotate(-0.3deg) scale(0.99); }
+  45%  { transform: translate(-5px, -2px) rotate(0.5deg) scale(1.02); }
+  60%  { transform: translate(-2px, 3px) rotate(-0.4deg) scale(1); }
+  75%  { transform: translate(3px, 5px) rotate(0.3deg) scale(0.98); }
+  90%  { transform: translate(4px, 1px) rotate(-0.5deg) scale(1.01); }
+  100% { transform: translate(0px, 0px) rotate(0deg) scale(1); }
+}
+
+#play-music {
+  background-color: transparent !important;
+  border: none !important;
+
+  svg {
+    color: var(--primary);
+  }
+  &.playing > svg {
+    animation: musicRainbow 5s infinite;
+  }
+}
+
+@keyframes musicRainbow {
+    0% {
+      color: red;
+    }
+    33% {
+      color: orange;
+    }
+    66% {
+      color: yellow;
+    }
+    90% {
+      color: green;
+    }
+    100% {
+      color: red;
+    }
+}
+
+.clickMe {
+  animation: clickMe 1s infinite;
+}
+
+/* Annoying animation shaking the button */
+@keyframes clickMe {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+
+    25% {
+      transform: rotate(5deg);
+    }
+
+    50% {
+      transform: rotate(0deg) scale(1.1);
+    }
+
+    75% {
+      transform: rotate(-5deg);
+    }
+
+    100% {
+      transform: rotate(0deg) scale(1);
+    }
 }
 
 .confession-form {
@@ -392,124 +464,124 @@
   .site-header {
     padding: var(--space-8) 0 var(--space-6);
   }
-  
+
   .header-grid {
     grid-template-columns: 1fr auto;
     gap: var(--space-6);
     text-align: left;
   }
-  
+
   .site-title {
     text-align: left;
   }
-  
+
   .site-title h1 {
     font-size: var(--text-4xl);
   }
-  
+
   .site-subtitle {
     font-size: var(--text-xl);
   }
-  
-  .mascot img {
+
+  #mascot img {
     width: 140px;
   }
-  
+
   .form-actions {
     grid-template-columns: 1fr;
     gap: var(--space-6);
   }
-  
+
   .checkbox-wrapper {
     justify-content: flex-start;
     padding: var(--space-4);
     font-size: var(--text-lg);
   }
-  
+
   .checkbox-input {
     width: 28px;
     height: 28px;
   }
-  
+
   .checkbox-input:checked::after {
     font-size: 18px;
   }
-  
+
   .checkbox-label {
     font-size: var(--text-lg);
   }
-  
+
   .container {
     padding: 0 var(--space-6);
   }
-  
+
   .confession-textarea {
     font-size: var(--text-xl);
     min-height: 140px;
     padding: var(--space-4);
     resize: none;
   }
-  
+
   .submit-btn {
     padding: var(--space-6) var(--space-8);
     font-size: var(--text-2xl);
     width: 100%;
   }
-  
+
   .confession-card {
     padding: var(--space-6);
   }
-  
+
   .background-label {
     text-align: center;
     font-size: var(--text-lg);
     margin-bottom: var(--space-4);
   }
-  
+
   .background-selector {
     justify-content: center;
     gap: var(--space-4);
   }
-  
+
   .background-option {
     width: 120px;
     height: 90px;
   }
-  
+
   .background-name {
     font-size: var(--text-sm);
     padding: var(--space-2) var(--space-3);
   }
-  
+
   .confessions-section h2 {
     text-align: left;
     font-size: var(--text-3xl);
     margin-bottom: var(--space-6);
   }
-  
+
   .confessions-list {
     gap: var(--space-6);
   }
-  
+
   .form-group {
     margin-bottom: var(--space-8);
   }
-  
+
   .reaction-button {
     padding: var(--space-2) var(--space-3);
     font-size: var(--text-sm);
     min-height: 36px;
     gap: var(--space-1);
   }
-  
+
   .reaction-emoji {
     font-size: 1.2em;
   }
-  
+
   .reaction-count {
     font-size: var(--text-sm);
   }
-  
+
   .site-subtitle::after {
     display: none;
   }
@@ -519,60 +591,60 @@
   .site-header {
     padding: var(--space-6) 0 var(--space-4);
   }
-  
+
   .header-grid {
     gap: var(--space-4);
   }
-  
+
   .site-title h1 {
     font-size: var(--text-3xl);
   }
-  
+
   .site-subtitle {
     font-size: var(--text-lg);
   }
-  
-  .mascot img {
+
+  #mascot img {
     width: 120px;
   }
-  
+
   .container {
     padding: 0 var(--space-4);
   }
-  
+
   .confession-textarea {
     font-size: var(--text-lg);
     min-height: 120px;
   }
-  
+
   .submit-btn {
     font-size: var(--text-xl);
     padding: var(--space-5) var(--space-6);
   }
-  
+
   .confession-card {
     padding: var(--space-4);
   }
-  
+
   .confession-text {
     font-size: var(--text-base);
   }
-  
+
   .background-option {
     width: 100px;
     height: 75px;
   }
-  
+
   .background-name {
     font-size: var(--text-xs);
     padding: var(--space-1) var(--space-2);
   }
-  
+
   .confessions-section h2 {
     font-size: var(--text-2xl);
     margin-bottom: var(--space-4);
   }
-  
+
   .confessions-list {
     gap: var(--space-4);
   }
@@ -582,24 +654,24 @@
   .container {
     padding: 0 var(--space-3);
   }
-  
+
   .site-title h1 {
     font-size: var(--text-2xl);
   }
-  
-  .mascot img {
+
+  #mascot img {
     width: 100px;
   }
-  
+
   .confession-textarea {
     min-height: 100px;
   }
-  
+
   .submit-btn {
     font-size: var(--text-lg);
     padding: var(--space-4) var(--space-5);
   }
-  
+
   .background-option {
     width: 85px;
     height: 64px;
@@ -610,21 +682,21 @@
   .confession-textarea {
     font-size: 16px;
   }
-  
+
   .submit-btn {
     min-height: 44px;
   }
-  
+
   .checkbox-input {
     min-width: 24px;
     min-height: 24px;
   }
-  
+
   .github-link {
     min-width: 44px;
     min-height: 44px;
   }
-  
+
   .background-option {
     min-height: 44px;
   }

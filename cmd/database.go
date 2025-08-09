@@ -31,8 +31,10 @@ func (app *Application) setupDatabase() (err error) {
 		return
 	}
 
-	app.db.AutoMigrate(&confession{})
-	app.db.AutoMigrate(&reaction{})
+	app.db.AutoMigrate(
+		&confession{},
+		&reaction{},
+	)
 
 	return
 }
