@@ -8,7 +8,6 @@ const playMusic = document.getElementById('play-music')
 const mascot = document.getElementById('mascot')
 
 feather.replace();
-dayjs.extend(window.dayjs_plugin_relativeTime)
 
 const VALID_REACTIONS = ['❤️', '😭', '🐈']
 const wsProtocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
