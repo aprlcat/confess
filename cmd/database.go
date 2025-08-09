@@ -11,7 +11,18 @@ type confession struct {
 
 	Confession string
 	IpAddress  string
-	Public     bool // Wether confession should show up on the feed, true = shows up on feed!
+	Public     bool // Whether confession should show up on the feed, true = shows up on feed!
+	Background string
+
+	Reactions []reaction `gorm:"foreignKey:ConfessionID"`
+}
+
+type reaction struct {
+	gorm.Model
+
+	ConfessionID uint
+	Emoji        string
+	IpAddress    string
 }
 
 func (app *Application) setupDatabase() (err error) {
@@ -21,6 +32,7 @@ func (app *Application) setupDatabase() (err error) {
 	}
 
 	app.db.AutoMigrate(&confession{})
+	app.db.AutoMigrate(&reaction{})
 
 	return
 }
